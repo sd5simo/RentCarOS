@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma'; // <-- ADDED CURLY BRACES HERE
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +16,6 @@ export async function POST(request: Request) {
     });
 
     // Verify user exists and password matches
-    // Note: In a production app, you should use bcrypt to hash/compare passwords!
     if (!user || user.password !== password) {
       return NextResponse.json({ error: 'Identifiants incorrects' }, { status: 401 });
     }
