@@ -9,15 +9,58 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+// -----------------------------------------------------------------------------
+// CORE ENTITIES (Agencies & Users)
+// -----------------------------------------------------------------------------
+
+model Agency {
+  id        String   @id @default(cuid())
+  name      String
+  city      String
+  address   String?
+  phone     String?
+  email     String?
+  status    String   @default("ACTIVE") // ACTIVE, INACTIVE
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users        User[]
+  vehicles     Vehicle[]
+  rentals      Rental[]
+  reservations Reservation[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  pseudo    String?
+  role      String   @default("EMPLOYEE") // MANAGER, EMPLOYEE
+  agencyId  String?
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  agency       Agency?       @relation(fields: [agencyId], references: [id])
+  activityLogs ActivityLog[]
+}
+
+// -----------------------------------------------------------------------------
+// CLIENTS & PARTNERS
+// -----------------------------------------------------------------------------
+
 model Client {
   id              String    @id @default(cuid())
-  cin             String    @unique
+  cin             String?   @unique
+  passport        String?   @unique
+  type            String    @default("PARTICULIER") // PARTICULIER, ENTREPRISE
   firstName       String
   lastName        String
   email           String?
   phone           String
   address         String?
   city            String?
+  nationality     String?
+  dateOfBirth     DateTime?
   licenseNum      String?
   licenseExp      DateTime?
   isBlacklist     Boolean   @default(false)
@@ -32,6 +75,54 @@ model Client {
   infractions  Infraction[]
 }
 
+model PartnerCompany {
+  id        String   @id @default(cuid())
+  name      String
+  ice       String?
+  rc        String?
+  contact   String?
+  email     String?
+  phone     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Samsar {
+  id             String   @id @default(cuid())
+  firstName      String
+  lastName       String
+  phone          String
+  commissionRate Float?   // Percentage or fixed
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  rentals Rental[]
+}
+
+model Driver {
+  id             String    @id @default(cuid())
+  firstName      String
+  lastName       String
+  phone          String
+  pricingMode    String    @default("PER_DAY") // PER_DAY (Tarif par Jour), FLAT (Forfait Unique)
+  dailyRate      Float     @default(0)
+  cin            String?
+  cinExpiry      DateTime?
+  licenseNum     String?
+  licenseExpiry  DateTime?
+  status         String    @default("ACTIVE")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // A driver can be assigned to multiple rentals
+  rentals Rental[] @relation("RentalDriver")
+}
+
+// -----------------------------------------------------------------------------
+// VEHICLES & MAINTENANCE
+// -----------------------------------------------------------------------------
+
 model Vehicle {
   id                      String    @id @default(cuid())
   plate                   String    @unique
@@ -43,37 +134,53 @@ model Vehicle {
   fuelType                String
   transmission            String
   seats                   Int       @default(5)
+  doors                   Int       @default(4)
+  tankSize                Int       @default(50)
   dailyRate               Float
   status                  String    @default("AVAILABLE")
+  agencyId                String?
+  
+  // Maintenance Metrics
   mileage                 Int       @default(0)
   lastOilChangeMileage    Int       @default(0)
   nextOilChangeMileage    Int       @default(10000)
+  timingBeltMileage       Int       @default(0)
+  nextTimingBeltMileage   Int       @default(80000)
   technicalInspectionDate DateTime?
   insuranceExpiry         DateTime?
   vignetteExpiry          DateTime?
+  
   notes                   String?
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
 
+  agency       Agency?       @relation(fields: [agencyId], references: [id])
   reservations Reservation[]
   rentals      Rental[]
   damageLogs   DamageLog[]
   expenses     Expense[]
 }
 
+// -----------------------------------------------------------------------------
+// RENTALS & RESERVATIONS
+// -----------------------------------------------------------------------------
+
 model Reservation {
   id          String   @id @default(cuid())
   refCode     String   @unique
   clientId    String
   vehicleId   String
+  agencyId    String?
   startDate   DateTime
   endDate     DateTime
   totalAmount Float
+  advance     Float    @default(0)
   status      String   @default("PENDING")
   notes       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  agency  Agency? @relation(fields: [agencyId], references: [id])
   client  Client  @relation(fields: [clientId], references: [id])
   vehicle Vehicle @relation(fields: [vehicleId], references: [id])
   rental  Rental?
@@ -82,31 +189,71 @@ model Reservation {
 model Rental {
   id              String    @id @default(cuid())
   contractNum     String    @unique
+  type            String    @default("CLASSIQUE")
+  
+  // Relations
   clientId        String
   vehicleId       String
   reservationId   String?   @unique
+  agencyId        String?
+  samsarId        String?
+  driverId        String?
+  
+  // Dates & Details
   startDate       DateTime
   endDate         DateTime
   returnDate      DateTime?
+  departureCity   String    @default("Casablanca")
+  returnCity      String    @default("Casablanca")
+  
+  // Financials
   dailyRate       Float
+  reduction       Float     @default(0)
   totalDays       Int
   totalAmount     Float
   paidAmount      Float     @default(0)
   deposit         Float     @default(0)
+  depositType     String    @default("NONE") // NONE, CASH, CHEQUE, CARD
   depositReturned Boolean   @default(false)
+  
+  // Vehicle State
   fuelLevelStart  String    @default("Plein")
   fuelLevelEnd    String?
   mileageStart    Int
   mileageEnd      Int?
-  status          String    @default("ACTIVE")
+  
+  // E-Signature Status
+  signatureStatus String    @default("PENDING") // PENDING, SIGNED
+  accessCode      String?   // 4-digit PIN for client access
+  
+  status          String    @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
   extras          String?
   notes           String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  agency      Agency?      @relation(fields: [agencyId], references: [id])
   client      Client       @relation(fields: [clientId], references: [id])
   vehicle     Vehicle      @relation(fields: [vehicleId], references: [id])
   reservation Reservation? @relation(fields: [reservationId], references: [id])
+  samsar      Samsar?      @relation(fields: [samsarId], references: [id])
+  driver      Driver?      @relation("RentalDriver", fields: [driverId], references: [id])
+}
+
+// -----------------------------------------------------------------------------
+// LOGS & FINANCES
+// -----------------------------------------------------------------------------
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String   // e.g., "créé une agence", "modifié une location"
+  entityType  String   // e.g., "Agency", "Rental"
+  entityId    String
+  details     String?  // JSON stringified details
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
 }
 
 model DamageLog {
