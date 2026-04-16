@@ -32,7 +32,6 @@ const NAV = [
   { title: "Modération", items: [
     { label: "Infractions",        href: "/moderation/infractions", icon: <AlertTriangle size={14} /> },
   ]},
-  // ✨ NOUVEAU MENU PARAMÈTRES ✨
   { title: "Configuration", items: [
     { label: "Paramètres",         href: "/parametres",             icon: <Settings size={14} /> },
   ]},
@@ -41,9 +40,14 @@ const NAV = [
 export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { username, logout } = useAuth();
+  
+  // FIXED: Changed 'username' to 'user' to match our new real database store
+  const { user, logout } = useAuth();
 
   const handleLogout = () => { logout(); router.push("/login"); };
+
+  // Helper to display name (uses pseudo if exists, otherwise email prefix)
+  const displayName = user?.pseudo || user?.email?.split('@')[0] || "Admin";
 
   return (
     <aside className={cn("flex flex-col h-full border-r border-[#21262d] bg-[#0d1117] transition-all duration-300 ease-in-out z-30 flex-shrink-0", collapsed ? "w-[60px]" : "w-[240px]")}>
@@ -52,12 +56,11 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {!collapsed ? (
           <>
             <div className="flex items-center gap-2.5">
-              {/* ✨ CUSTOM LOGO - EXPANDED ✨ */}
               <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
-                <img src="/logo.png" alt="RentCar OSLogo" className="w-full h-full object-contain" />
+                <img src="/logo.png" alt="Rentify-OSLogo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <p className="text-white font-bold text-sm leading-none">RentCar OS</p>
+                <p className="text-white font-bold text-sm leading-none">Rentify-OS</p>
                 <p className="text-[10px] text-brand-green-500/70 leading-none mt-0.5"> · Admin</p>
               </div>
             </div>
@@ -66,9 +69,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </button>
           </>
         ) : (
-          /* ✨ CUSTOM LOGO - COLLAPSED ✨ */
           <div className="w-8 h-8 flex items-center justify-center mx-auto">
-            <img src="/logo.png" alt="RentCar OSLogo" className="w-full h-full object-contain" />
+            <img src="/logo.png" alt="Rentify-OSLogo" className="w-full h-full object-contain" />
           </div>
         )}
       </div>
@@ -127,11 +129,13 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <div className="p-3 border-t border-[#21262d]">
           <div className="flex items-center gap-3 px-3 py-2 rounded-md bg-[#161b22]">
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-orange-400 to-brand-orange-600 flex items-center justify-center flex-shrink-0">
-              <span className="text-[11px] font-bold text-white">{username ? username[0].toUpperCase() : "A"}</span>
+              {/* FIXED: Uses the first letter of their pseudo or email */}
+              <span className="text-[11px] font-bold text-white">{displayName[0].toUpperCase()}</span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-slate-200 truncate capitalize">{username ?? "Admin"}</p>
-              <p className="text-[10px] text-slate-500">Administrateur</p>
+              {/* FIXED: Displays real user info */}
+              <p className="text-xs font-semibold text-slate-200 truncate capitalize">{displayName}</p>
+              <p className="text-[10px] text-slate-500 truncate">{user?.role === 'MANAGER' ? 'Manager' : 'Employé'}</p>
             </div>
             <button onClick={handleLogout} title="Déconnexion" className="text-slate-500 hover:text-red-400 transition-colors p-1">
               <LogOut size={13} />

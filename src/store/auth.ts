@@ -1,52 +1,34 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface AuthState {
-  isAuthenticated: boolean;
-  username: string | null;
-  credentials: Record<string, string>;
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
-  updatePassword: (user: string, newPass: string) => void;
+interface User {
+  id: string;
+  email: string;
+  pseudo: string | null;
+  role: string;
 }
 
-const DEFAULT_CREDENTIALS: Record<string, string> = {
-  admin: "rentcar",
-  manager: "carayou123",
-};
+interface AuthState {
+  isAuthenticated: boolean;
+  user: User | null;
+  setAuth: (user: User) => void;
+  logout: () => void;
+}
 
 export const useAuth = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       isAuthenticated: false,
-      username: null,
-      credentials: DEFAULT_CREDENTIALS,
+      user: null,
       
-      login: (username, password) => {
-        if (!username || !password) return false;
-        
-        const cleanUser = username.trim().toLowerCase();
-        const cleanPass = password.trim();
-        const currentCreds = get().credentials || DEFAULT_CREDENTIALS;
-
-        if (currentCreds[cleanUser] === cleanPass) {
-          set({ isAuthenticated: true, username: cleanUser });
-          return true;
-        }
-        return false;
-      },
+      // We no longer verify passwords here. The API does that.
+      // This simply saves the real user to the browser session.
+      setAuth: (user) => set({ isAuthenticated: true, user }),
       
-      logout: () => set({ isAuthenticated: false, username: null }),
-      
-      updatePassword: (user, newPass) => set((state) => ({
-        credentials: { ...(state.credentials || DEFAULT_CREDENTIALS), [user]: newPass }
-      })),
+      logout: () => set({ isAuthenticated: false, user: null }),
     }),
     { 
       name: "RentCar-auth",
-      // MAGIE : On dit au navigateur de ne sauvegarder QUE les mots de passe.
-      // Au rafraîchissement, "isAuthenticated" redevient "false", donc ça déconnecte !
-      partialize: (state) => ({ credentials: state.credentials }),
     }
   )
 );

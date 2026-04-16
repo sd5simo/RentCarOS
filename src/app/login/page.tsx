@@ -2,16 +2,17 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/store/auth'; // FIXED: useAuth instead of useAuthStore
-import { Car, Lock, User, AlertCircle, ArrowRight } from 'lucide-react'; // Changed Mail to User
+import { useAuth } from '@/store/auth'; 
+import { Car, Lock, Mail, AlertCircle, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   
-  // FIXED: Get the login function directly from your Zustand store
-  const login = useAuth((state) => state.login); 
+  // Get the setAuth function from our updated real store
+  const setAuth = useAuth((state) => state.setAuth); 
   
-  const [username, setUsername] = useState(''); // FIXED: Changed email to username
+  // Using email instead of username, because your Prisma database uses 'email'
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -22,19 +23,25 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Optional: Simulate a small network delay for a better UX transition
-      await new Promise(resolve => setTimeout(resolve, 600));
+      // 1. Send the login request to the REAL backend API
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-      // FIXED: Call the Zustand store's login function
-      const isSuccess = login(username, password);
+      const data = await res.json();
 
-      if (isSuccess) {
-        // Redirect to dashboard on success
-        router.push('/dashboard/statistiques');
-      } else {
-        // If login returns false, throw an error
-        throw new Error('Identifiant ou mot de passe incorrect');
+      // 2. If the API says the password or email is wrong, throw an error
+      if (!res.ok) {
+        throw new Error(data.error || 'Erreur de connexion');
       }
+
+      // 3. Success! Save the REAL user data from the database into Zustand
+      setAuth(data.user);
+      
+      // 4. Redirect to the dashboard
+      router.push('/dashboard/statistiques');
       
     } catch (err: any) {
       setError(err.message);
@@ -67,16 +74,15 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-xs uppercase text-gray-400 font-bold mb-1">Identifiant</label>
+            <label className="block text-xs uppercase text-gray-400 font-bold mb-1">Email</label>
             <div className="relative border border-gray-700 rounded-lg bg-[#151b2b] focus-within:border-yellow-500 transition-colors">
-              {/* Changed icon from Mail to User */}
-              <User className="absolute left-3 top-3 w-4 h-4 text-gray-500" />
+              <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-500" />
               <input 
-                type="text" 
+                type="email" 
                 required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Ex: admin" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@jebrental.com" 
                 className="w-full bg-transparent pl-10 pr-4 py-2.5 text-white focus:outline-none text-sm" 
               />
             </div>
