@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
-    "db:seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
+    "db:seed": "prisma db seed",
     "db:studio": "prisma studio"
   },
   "dependencies": {
@@ -44,7 +44,7 @@
     "zustand": "^4.5.4"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.19.39",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.27",
@@ -56,6 +56,9 @@
     "prisma": "^5.22.0",
     "tailwindcss": "^3.4.19",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }
