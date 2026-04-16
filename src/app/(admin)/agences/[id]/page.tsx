@@ -26,7 +26,7 @@ export default function AgencyDetailsPage({ params }: { params: { id: string } }
           </div>
           <div>
             <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-              Fiche d'Agence : kharrazi
+              Fiche d'Agence : RentCar
               <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded text-xs font-bold border border-emerald-500/30 flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3"/> Active
               </span>
@@ -60,7 +60,7 @@ export default function AgencyDetailsPage({ params }: { params: { id: string } }
                <div className="space-y-4">
                   <div>
                     <label className="block text-xs uppercase text-gray-500 font-bold mb-1">Nom de l'agence</label>
-                    <p className="text-white text-base py-1 border-b border-gray-700">kharrazi</p>
+                    <p className="text-white text-base py-1 border-b border-gray-700">RentCar</p>
                   </div>
                   <div>
                     {/* FIXED: Closed with </label> */}
@@ -70,7 +70,7 @@ export default function AgencyDetailsPage({ params }: { params: { id: string } }
                   <div>
                     {/* FIXED: Closed with </label> */}
                     <label className="block text-xs uppercase text-gray-500 font-bold mb-1 flex items-center gap-1"><Mail className="w-3 h-3"/> Email</label>
-                    <p className="text-white text-base py-1 border-b border-gray-700">contact@kharrazi-rent.ma</p>
+                    <p className="text-white text-base py-1 border-b border-gray-700">contact@RentCar-rent.ma</p>
                   </div>
                   <div>
                     {/* FIXED: Closed with </label> */}
@@ -118,7 +118,7 @@ export default function AgencyDetailsPage({ params }: { params: { id: string } }
                   <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(245,197,66,0.5)]">
                      <MapPin className="w-5 h-5 text-gray-900" />
                   </div>
-                  <span className="bg-[#151b2b] px-3 py-1 text-xs text-white rounded shadow-lg border border-gray-700">kharrazi - Casablanca</span>
+                  <span className="bg-[#151b2b] px-3 py-1 text-xs text-white rounded shadow-lg border border-gray-700">RentCar - Casablanca</span>
                </div>
                <button className="absolute bottom-4 right-4 px-4 py-2 bg-white text-gray-900 text-xs font-bold rounded-lg shadow-lg hover:bg-gray-100 transition-colors">
                  Ouvrir dans Google Maps
@@ -192,7 +192,7 @@ export default function AgencyDetailsPage({ params }: { params: { id: string } }
                           <p className="text-[10px] text-yellow-500">Gérant</p>
                         </div>
                       </div>
-                   </div>
+                    </div>
                    <div className="p-3 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-xs font-bold">SA</div>

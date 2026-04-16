@@ -11,7 +11,7 @@ interface AuthState {
 }
 
 const DEFAULT_CREDENTIALS: Record<string, string> = {
-  admin: "rentify",
+  admin: "rentcar",
   manager: "carayou123",
 };
 
@@ -43,7 +43,7 @@ export const useAuth = create<AuthState>()(
       })),
     }),
     { 
-      name: "kharrazi-auth",
+      name: "RentCar-auth",
       // MAGIE : On dit au navigateur de ne sauvegarder QUE les mots de passe.
       // Au rafraîchissement, "isAuthenticated" redevient "false", donc ça déconnecte !
       partialize: (state) => ({ credentials: state.credentials }),

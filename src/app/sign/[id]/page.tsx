@@ -111,7 +111,7 @@ export default function ClientSignaturePage({ params }: { params: { id: string }
                      <h2 className="text-xl font-bold text-blue-900">CONTRAT N°: CTR-2026000001</h2>
                      <p className="text-xs text-gray-600">Le 14/04/2026 17:09 à Casablanca.</p>
                    </div>
-                   <h1 className="text-2xl font-black text-blue-900 tracking-tighter">kharrazi</h1>
+                   <h1 className="text-2xl font-black text-blue-900 tracking-tighter">RentCar</h1>
                 </div>
                 {/* Mock content representing the PDF */}
                 <h3 className="font-bold text-blue-800 border-b border-blue-200 mb-2 uppercase text-sm">Véhicule de Location</h3>

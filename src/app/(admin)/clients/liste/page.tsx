@@ -17,7 +17,7 @@ export default function ClientsListPage() {
       name: "erty rtghj",
       phone: "+212676776655",
       type: "Particulier",
-      agency: "kharrazi • Casablanca",
+      agency: "RentCar • Casablanca",
       debt: 3360,
       createdAt: "14-04-2026 à 16:06"
     },
@@ -26,7 +26,7 @@ export default function ClientsListPage() {
       name: "rty dfg",
       phone: "+212634565344",
       type: "Particulier",
-      agency: "kharrazi • Casablanca",
+      agency: "RentCar • Casablanca",
       debt: 0,
       createdAt: "14-04-2026 à 16:14"
     }

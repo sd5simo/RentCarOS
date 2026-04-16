@@ -105,7 +105,7 @@ export default function NewRentalPage() {
                  <div>
                     <label className="block text-xs text-gray-400 mb-1">Agence</label>
                     <div className="w-full bg-transparent border-b border-gray-700 pb-2 text-white">
-                      kharrazi, Casablanca
+                      RentCar, Casablanca
                     </div>
                  </div>
               </div>

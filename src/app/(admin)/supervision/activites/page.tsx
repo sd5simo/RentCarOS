@@ -90,7 +90,7 @@ export default function ActivityLogsPage() {
                  </div>
                  <div>
                     <div className="flex items-center gap-2">
-                       <span className="font-bold text-white text-sm">Kharrazi</span>
+                       <span className="font-bold text-white text-sm">RentCar</span>
                        <span className="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 rounded text-[10px] font-bold border border-blue-500/20">Vous</span>
                     </div>
                     <span className="text-xs text-gray-500">14/04/2026 à 15:43</span>
@@ -115,7 +115,7 @@ export default function ActivityLogsPage() {
            <div className="bg-[#151b2b] border border-gray-800 rounded-lg p-4 text-sm text-gray-300 ml-13">
               <p className="mb-2">a créé une agence.</p>
               <ul className="space-y-1 text-xs text-gray-400">
-                <li>• Agence : kharrazi</li>
+                <li>• Agence : RentCar</li>
                 <li>• Ville : Casablanca</li>
                 <li className="flex items-center gap-1 mt-2 text-emerald-400">
                   <CheckCircle2 className="w-3 h-3" /> Active

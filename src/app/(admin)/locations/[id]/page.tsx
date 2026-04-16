@@ -63,7 +63,7 @@ export default function RentalDetailsPage({ params }: { params: { id: string } }
                </div>
                <div>
                  <p className="text-xs text-yellow-500 uppercase font-semibold mb-1 flex items-center gap-1"><MapPin className="w-3 h-3"/> Agence</p>
-                 <p className="font-bold text-white">kharrazi</p>
+                 <p className="font-bold text-white">RentCar</p>
                  <p className="text-xs text-gray-400">Casablanca</p>
                </div>
                <div>
